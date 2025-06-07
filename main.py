@@ -13,6 +13,8 @@ for key, value in os.environ.items():
     if key.startswith("TARGET_URL_"):
         URLS[key] = value
 
+print("✅ 環境變數網址：", URLS)
+
 # 狀態紀錄避免重複通知
 last_status = {k: "unknown" for k in URLS}
 
