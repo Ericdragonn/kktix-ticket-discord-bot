@@ -23,7 +23,7 @@ def send_discord(msg):
 
 def check_availability(name, url):
     headers = {"User-Agent": "Mozilla/5.0"}
-    res = requests.get(url, headers=headers)
+    res = requests.get(url, headers=headers, verify=False)
     soup = BeautifulSoup(res.text, "html.parser")
 
     ticket_inputs = soup.select("span.ticket-quantity-input input")
