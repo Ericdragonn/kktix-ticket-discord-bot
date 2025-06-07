@@ -26,17 +26,23 @@ def check_availability(name, url):
     res = requests.get(url, headers=headers, verify=False)
     soup = BeautifulSoup(res.text, "html.parser")
 
+    page_text = soup.get_text()
+
+    # ✅ 第一優先：頁面顯示「沒有票」的警示文字
+    if "目前沒有任何可以購買的票券" in page_text:
+        return "sold_out"
+
+    # ✅ 第二優先：頁面是否出現輸入票數的 input 欄位
     ticket_inputs = soup.select("span.ticket-quantity-input input")
     if ticket_inputs:
         return "available"
 
-    if "目前沒有任何可以購買的票券" in soup.get_text():
+    # ✅ 第三優先：如果全部都是「已售完」的字眼，也推論為賣完
+    sold_out_count = page_text.count("已售完")
+    if sold_out_count >= 5:
         return "sold_out"
 
-    sold_out_count = soup.get_text().count("已售完")
-    if sold_out_count > 5:
-        return "sold_out"
-
+    # ❓如果以上皆未命中，保守視為「尚有票」
     return "available"
 
 while True:
