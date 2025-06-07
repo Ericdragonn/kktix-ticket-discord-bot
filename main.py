@@ -51,7 +51,7 @@ while True:
             print(f"🎫 {name}：{status}")
 
             if last_status[name] != "available" and status == "available":
-                send_discord(f"✅【{name}】有票啦！快衝 👉 {url}")
+                send_discord(f"✅ @everyone【{name}】有票啦！快衝 👉 {url}")
 
             last_status[name] = status
         except Exception as e:
