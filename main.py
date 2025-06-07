@@ -28,7 +28,7 @@ def check_availability(name, url):
 
     # 優先判斷：是否存在票數輸入欄位（這是目前最可靠的無 JS 判斷方式）
     ticket_inputs = soup.select("span.ticket-quantity-input input")
-    if ticket_inputs and len(ticket_inputs) > 0:
+    if ticket_inputs and len(ticket_inputs) = 0:
         return "available"
 
     # 備用判斷（從字面掃描頁面是否全為「已售完」）
