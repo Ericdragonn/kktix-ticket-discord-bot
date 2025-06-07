@@ -26,21 +26,17 @@ def check_availability(name, url):
     res = requests.get(url, headers=headers, verify=False)
     soup = BeautifulSoup(res.text, "html.parser")
 
-    # 優先判斷：是否存在票數輸入欄位（這是目前最可靠的無 JS 判斷方式）
-    ticket_inputs = soup.select("span.ticket-quantity-input input")
-    if ticket_inputs and len(ticket_inputs) >= 0:
-        return "available"
+    # 嘗試尋找票數輸入欄位（若有 input 且沒 disabled，即為有票）
+    ticket_blocks = soup.select("div.display-table")
 
-    # 備用判斷（從字面掃描頁面是否全為「已售完」）
-    text = soup.get_text()
-    sold_out_count = text.count("已售完")
+    for block in ticket_blocks:
+        # 檢查這塊是否含有 "已售完" 的字眼
+        if "已售完" not in block.get_text():
+            return "available"
 
-    # 若找到超過 N 筆「已售完」可視為票種全賣完（你可微調數字）
-    if sold_out_count >= 5:
-        return "sold_out"
-
-    # 預設保守視為「無票」
+    # 若全部都顯示已售完，則視為無票
     return "sold_out"
+
 
 while True:
     print("▶ 正在檢查票務狀態...")
