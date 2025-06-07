@@ -22,21 +22,23 @@ def send_discord(msg):
         print("⚠️ 未設定 WEBHOOK_URL")
 
 def check_availability(name, url):
+    from bs4 import BeautifulSoup
+    import requests
+
     headers = {"User-Agent": "Mozilla/5.0"}
     res = requests.get(url, headers=headers, verify=False)
     soup = BeautifulSoup(res.text, "html.parser")
 
-    # 嘗試尋找票數輸入欄位（若有 input 且沒 disabled，即為有票）
-    ticket_blocks = soup.select("div.display-table")
+    # 找出所有票券輸入欄位（input[type=text]）
+    ticket_inputs = soup.select("span.ticket-quantity-input input[type=text]")
 
-    for block in ticket_blocks:
-        # 檢查這塊是否含有 "已售完" 的字眼
-        if "已售完" not in block.get_text():
+    for input_box in ticket_inputs:
+        value = input_box.get("value", "0").strip()
+        if value.isdigit() and int(value) >= 0:
             return "available"
 
-    # 若全部都顯示已售完，則視為無票
+    # 如果完全找不到 input，視為無票（保守）
     return "sold_out"
-
 
 while True:
     print("▶ 正在檢查票務狀態...")
